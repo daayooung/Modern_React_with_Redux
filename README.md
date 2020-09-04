@@ -175,7 +175,7 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
 
 <br>
 
-[ useEffect 1 ]
+#### [ useEffect 1 ]
 
 1. debouncedTerm에 term을 설정한다.
 2. setDebouncedTerm(term)에 500ms 의 timer를 걸어 사용자가 검색어를 너무 빠르게 입력할 경우 검색어 입력 과정에서의 setDebouncedTerm(term)은 취소한다.
@@ -192,7 +192,10 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
 ```
 
 <br>
-[ useEffect 2 ]
+
+#### [ useEffect 2 ]
+
+<br>
 
 1. search 함수 호출하여 api 요청 / 응답 수행하는데, 이 때 params의 srsearch를 debouncedTerm로 설정한다.
 2. setResults에 검색결과를 할당 한다.
@@ -324,7 +327,7 @@ useEffect의 clean up function에서 removeEventListener를 해주면, 나중에
 
 <br>
 
-null.current.contains(event.target) 을 찾을 수 없다는 error와 같은 참담한 상황이 발생하지 않는다.
+null.current.contains(event.target) 을 찾을 수 없다는 error가 발생하지 않는다.
 
 ```
   useEffect(() => {
@@ -346,3 +349,53 @@ null.current.contains(event.target) 을 찾을 수 없다는 error와 같은 참
 <br>
 
 > [170~176강] Reminder on Event Bubbing
+
+# Translation App API 요청 최적화
+
+#### [ useEffect 1 ]
+
+1. Set a timer to update 'deboucedText' in 500ms
+2. Return a cleanup function that cancels this timer
+
+```
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedText(text);
+    }, 500);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [text]);
+```
+
+<br>
+
+#### [ useEffect 2 ]
+
+1. Make a request with 'debouncedText'
+
+```
+  useEffect(() => {
+    const doTranslation = async () => {
+      const { data } = await axios.post(
+        'https://translation.googleapis.com/language/translate/v2',
+        {},
+        {
+          params: {
+            q: debouncedText,
+            target: language.value,
+            key: 'AIzaSyCHUCmpR7cT_yDFHC98CZJy2LTms-IwDlM'
+          }
+        }
+      );
+      setTranslated(data.data.translations[0].translatedText);
+    };
+
+    doTranslation();
+  }, [language, debouncedText]);
+```
+
+<br>
+
+> [185강] Debouncing Translation Updates
