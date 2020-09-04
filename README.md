@@ -9,11 +9,14 @@
   }, [data])
 ```
 
+<br>
+
 ### second argument
 
 - [] : 첫 render 시 실행
 - second argument 없음 : 첫 render 시 실행 후 rerender 될 때마다 실행
 - [data] : 첫 render 시 실행, [] 안 data의 내용이 바뀔 때 실행
+  <br>
 
 > [146강] The use Effect Hook
 
@@ -30,6 +33,8 @@ useEffect(async () => {
 }, [term]);
 ```
 
+<br>
+
 해결 1)
 useEffect 내에 비동기 함수를 작성하고 즉시 호출한다.
 
@@ -43,6 +48,8 @@ useEffect 내에 비동기 함수를 작성하고 즉시 호출한다.
   }, [term]);
 ```
 
+<br>
+
 해결 2)
 해결 1처럼 변수를 설정하는 대신, useEffect 내 비동기 함수를 즉시 실행 함수로 작성한다.
 
@@ -55,6 +62,8 @@ useEffect 내에 비동기 함수를 작성하고 즉시 호출한다.
   }, [term]);
 ```
 
+<br>
+
 해결 3)
 async await 대신 그 전 문법인 promise을 사용한다. axios 요청을 하면 promise를 반환하는데, 이 때 then으로 엮을 수 있다. 해당 api에서 반환되는 응답과 함께 then 뒤의 arrow function 이 호출된다.
 
@@ -66,6 +75,8 @@ async await 대신 그 전 문법인 promise을 사용한다. axios 요청을 �
 
   }, [term]);
 ```
+
+<br>
 
 > [149강] Async Code in useEffect
 
@@ -87,6 +98,8 @@ url이 된다.
     };
 ```
 
+<br>
+
 > [150강] Async Code in useEffect
 
 # dangerouslySetInnerHTML
@@ -97,6 +110,8 @@ XSS 공격을 당해 악의적 data도 함께 노출하게 될 수 있어 사용
 ```
  <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
 ```
+
+<br>
 
 > [153강] XSS Attacks in React
 
@@ -140,9 +155,11 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
   }, [term]);
 ```
 
-> [157강] XSS Attacks in React
+<br>
 
-# 검색결과 요청/응답 한 번만 발생하게 하기
+> [157강] Throtting API Requests
+
+# API 요청 제한
 
 ### 1. useEffact의 두번째 인자에 results.length 할당x
 
@@ -155,6 +172,8 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
 그러기 위해 useEffect() 두 개가 필요하다.
 하나는 즉시 term을 업데이트 하고, debouncedTerm 업데이트에는 타이머를 설정하고,
 하나는 debouncedTerm을 바라보다 상태가 변경되면 데이터를 요청한다.
+
+<br>
 
 [ useEffect 1 ]
 
@@ -172,6 +191,7 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
   }, [term]);
 ```
 
+<br>
 [ useEffect 2 ]
 
 1. search 함수 호출하여 api 요청 / 응답 수행하는데, 이 때 params의 srsearch를 debouncedTerm로 설정한다.
@@ -198,4 +218,131 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
   }, [debouncedTerm]);
 ```
 
-> [162강] XSS Attacks in React
+<br>
+
+> [162강] Optional Video - Fixing a Warning
+
+# div / className 활성화
+
+1. const [open, setOpen] = useState(false);
+2. item list에 onClick={() => onSelectedChange(option)}
+3. 클릭 여부에 따라 활성/비활성화 할 내용에 className={`menu ${open ? 'visible transition' : ''}`}
+
+```
+const [open, setOpen] = useState(false);
+
+...
+
+const renderedOptions = options.map((option) => {
+  if (option.value === selected.value) {
+    return null;
+  }
+
+  return (
+    <div
+      key={option.value}
+      className="item"
+      onClick={() => onSelectedChange(option)}
+    >
+      {option.label}
+    </div>
+  );
+});
+
+...
+
+  <div className={`menu ${open ? 'visible transition' : ''}`}>
+    {renderedOptions}
+  </div>
+```
+
+<br>
+
+> [163~168강] Dropdown Architectrue
+
+# Javascript / React event
+
+Javascript와 React로 각각 click event를 걸면, Javascript의 event가 먼저 호출된다.
+
+- Javascript
+
+```
+  useEffect(() => {
+    document.body.addEventListener('click', () => {
+      setOpen(false);
+    });
+  }, []);
+```
+
+<br>
+
+- React
+
+```
+    return (
+      <div
+        key={option.value}
+        className="item"
+        onClick={() => onSelectedChange(option)}
+      >
+        {option.label}
+      </div>
+    );
+});
+
+<div
+  onClick={() => setOpen(!open)}
+  className={`ui selection dropdown ${open ? 'visible active' : ''}
+  `}
+  >
+  <i className="dropdown icon"></i>
+  <div className="text">{selected.label}</div>
+  <div className={`menu ${open ? 'visible transition' : ''}`}>
+    {renderedOptions}
+  </div>
+</div>
+
+```
+
+<br>
+
+이로 인해 dropdown 내부를 클릭했을 때 내부에 걸어둔 onClick event가 먹지 않는 상황이 발생한다. 이럴 때 해당 list가 속한 Elem을 useRef로 참조하고, 클릭한 곳이 그 ref일 경우 Javascript로 걸어둔 event를 return 시키면 된다.
+
+```
+if (ref.current.contains(event.target)) {
+  return;
+}
+```
+
+<br>
+
+useEffect의 clean up function에서 removeEventListener를 해주면, 나중에 App.js에서 toggle로 Dropdown 컴포넌트를 숨겨 ref가 null이 되는 상황이 와도
+
+```
+ {showDropdown ? (<Dropdown/>) : null}
+```
+
+<br>
+
+null.current.contains(event.target) 을 찾을 수 없다는 error와 같은 참담한 상황이 발생하지 않는다.
+
+```
+  useEffect(() => {
+    const onBodyClick = (event) => {
+      if (ref.current.contains(event.target)) {
+        return;
+      }
+      setOpen(false);
+    };
+
+    document.body.addEventListener('click', onBodyClick);
+
+    return () => {
+      document.body.removeEventListener('click', onBodyClick);
+    };
+  }, []);
+```
+
+<br>
+
+> [170~176강] Reminder on Event Bubbing
