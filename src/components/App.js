@@ -1,52 +1,27 @@
 import React from 'react';
-import youtube from '../apis/youtube';
-import SearchBar from './SearchBar';
-import VideoList from './VideoList';
-import VideoDetail from './VideoDetail';
+import Search from './Search';
 
-class App extends React.Component {
-  state = { videos: [], selectedVideo: null };
-
-  componentDidMount() {
-    this.onTermSubmit('Crush 노래');
+const items = [
+  {
+    title: 'What is React?',
+    content: 'React is a front end javascript framwork'
+  },
+  {
+    title: 'Why use React?',
+    content: 'React is a favorite JS library among engineers'
+  },
+  {
+    title: 'How do you use React?',
+    content: 'You use React by creating Components'
   }
-  onTermSubmit = async (term) => {
-    const response = await youtube.get('/search', {
-      params: {
-        q: term
-      }
-    });
-    this.setState({
-      videos: response.data.items,
-      selectedVideo: response.data.items[0]
-    });
-  };
+];
 
-  onVideoSelect = (video) => {
-    this.setState({ selectedVideo: video });
-  };
-
-  render() {
-    return (
-      <div className="ui container">
-        <SearchBar onFormSubmit={this.onTermSubmit} />
-        <p>I have {this.state.videos.length} videos.</p>
-        <div className="ui grid">
-          <div className="ui row">
-            <div className="eleven wide column">
-              <VideoDetail video={this.state.selectedVideo} />
-            </div>
-            <div className="five wide column">
-              <VideoList
-                onVideoSelect={this.onVideoSelect}
-                videos={this.state.videos}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
+const App = () => {
+  return (
+    <div>
+      <Search />
+    </div>
+  );
+};
 
 export default App;
