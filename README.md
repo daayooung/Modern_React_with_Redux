@@ -87,7 +87,7 @@ url이 된다.
     };
 ```
 
-[150강] Async Code in useEffect
+> [150강] Async Code in useEffect
 
 # dangerouslySetInnerHTML
 
@@ -98,9 +98,9 @@ XSS 공격을 당해 악의적 data도 함께 노출하게 될 수 있어 사용
  <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
 ```
 
-[153강] XSS Attacks in React
+> [153강] XSS Attacks in React
 
-# 검색어 타이핑과 setTimout
+# 검색어 입력과 setTimeout
 
 setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실행되고 검색결과가 노출이 되므로
 
@@ -140,4 +140,62 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
   }, [term]);
 ```
 
-[157강] XSS Attacks in React
+> [157강] XSS Attacks in React
+
+# 검색결과 요청/응답 한 번만 발생하게 하기
+
+### 1. useEffact의 두번째 인자에 results.length 할당x
+
+두번째 인자에 results.length를 할당하게 되면, 요청/응답이 2번 일어난다.
+
+### 2. term, debouncedTerm로 state 분리
+
+현재 보여주고 있는 검색결과와 새로 입력한 검색어가 같을 경우 search를 재실행하지 않는다.
+
+그러기 위해 useEffect() 두 개가 필요하다.
+하나는 즉시 term을 업데이트 하고, debouncedTerm 업데이트에는 타이머를 설정하고,
+하나는 debouncedTerm을 바라보다 상태가 변경되면 데이터를 요청한다.
+
+[ useEffect 1 ]
+
+1. debouncedTerm에 term을 설정한다.
+2. setDebouncedTerm(term)에 500ms 의 timer를 걸어 사용자가 검색어를 너무 빠르게 입력할 경우 검색어 입력 과정에서의 setDebouncedTerm(term)은 취소된다.
+
+```
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedTerm(term);
+    }, 500);
+    return () => {
+      clearTimeout(timerId)
+    };
+  }, [term]);
+```
+
+[ useEffect 2 ]
+
+1. search 함수 호출하여 api 요청 / 응답 수행하는데, 이 때 params의 srsearch를 debouncedTerm로 설정한다.
+2. setResults에 검색결과를 할당 한다.
+
+```
+   useEffect(() => {
+    const search = async () => {
+      const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+        params: {
+          action: 'query',
+          list: 'search',
+          origin: '*',
+          format: 'json',
+          srsearch: debouncedTerm
+        }
+      });
+
+      setResults(data.query.search);
+    };
+    if (debouncedTerm) {
+      search();
+    }
+  }, [debouncedTerm]);
+```
+
+> [162강] XSS Attacks in React
