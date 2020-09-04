@@ -1,6 +1,8 @@
 import React from 'react';
-
+import Accordion from './Accordion';
+import Search from './Search';
 import Translate from './Translate';
+import Dropdown from './Dropdown';
 
 const items = [
   {
@@ -32,10 +34,37 @@ const options = [
   }
 ];
 
+const showAccordion = () => {
+  if (window.location.pathname === '/') {
+    return <Accordion items={items} />;
+  }
+};
+
+const showList = () => {
+  if (window.location.pathname === '/list') {
+    return <Search />;
+  }
+};
+
+const showDropdown = () => {
+  if (window.location.pathname === '/dropdown') {
+    return <Dropdown />;
+  }
+};
+
+const showTranslate = () => {
+  if (window.location.pathname === '/translate') {
+    return <Translate />;
+  }
+};
+
 export default () => {
   return (
     <div>
-      <Translate />
+      {showAccordion()}
+      {showList()}
+      {showDropdown()}
+      {showTranslate()}
     </div>
   );
 };
