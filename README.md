@@ -178,7 +178,7 @@ setTimeout을 걸어두지 않으면 매 타이포마다 Search component가 실
 [ useEffect 1 ]
 
 1. debouncedTerm에 term을 설정한다.
-2. setDebouncedTerm(term)에 500ms 의 timer를 걸어 사용자가 검색어를 너무 빠르게 입력할 경우 검색어 입력 과정에서의 setDebouncedTerm(term)은 취소된다.
+2. setDebouncedTerm(term)에 500ms 의 timer를 걸어 사용자가 검색어를 너무 빠르게 입력할 경우 검색어 입력 과정에서의 setDebouncedTerm(term)은 취소한다.
 
 ```
   useEffect(() => {
