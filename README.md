@@ -438,3 +438,28 @@ if (event.metaKey || event.ctrlKey) {
 ```
 
 > [195강] Handling Command Click
+
+# Youtube App hooks로 리팩토링
+
+<br>
+
+```
+const onVideoSelect = (video) => {
+  setSelectedVideo(video);
+};
+```
+
+setSelectedVideo에 video를 넣어 실행하는 단순한 함수이므로 inline으로 넣어 깔끔하게 작성할 수 있다.
+<br>
+
+```
+<VideoList onVideoSelect={(video)=>setSelectedVideo(video)} videos={videos} />
+```
+
+video라는 하나의 argument를 받아 함수에 넣어줄 뿐이므로 둘 다 생략할 수 있다.
+
+<br>
+
+```
+<VideoList onVideoSelect={setSelectedVideo} videos={videos} />
+```
