@@ -402,16 +402,39 @@ null.current.contains(event.target) 을 찾을 수 없다는 error가 발생하�
 
 # Trandtional HTML & React의 페이지 전환
 
-- Trandtional HTML : 페이지가 바뀔 때마다 Javascript, CSS를 비롯한 앱을 구성하는 모든 파일들이 reload 됨.
+### Trandtional HTML
 
-- React :
-  사용자가 NAV를 클릭!
+페이지가 바뀔 때마다 Javascript, CSS를 비롯한 앱을 구성하는 모든 파일들이 reload 됨.
+
+### React
+
+사용자가 NAV를 클릭!
 
 1. URL을 바꾼다. (전체 페이지를 refresh 하지는 않는다.)
 2. 각 Route가 URL 변화를 감지한다.
 3. Route가 현재의 pathname을 추적해 몇몇 state를 업데이트 한다.
 4. 각 Route가 렌더되며 component가 적절하게 보여지거나 숨겨진다.
 
-  <br>
+<br>
 
 > [190강] Handling Navigation
+
+# window.history.pushState({},'','/translate')
+
+url을 바꿀 수 있는 javascript의 기본 기능
+
+<br>
+
+> [190강] Changing the URL
+
+# 새 탭에서 열기
+
+metaKey : Mac 키(command), ctrlKey: Window 키
+
+```
+if (event.metaKey || event.ctrlKey) {
+  return;
+}
+```
+
+> [195강] Handling Command Click
